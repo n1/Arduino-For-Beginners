@@ -1,0 +1,41 @@
+
+
+//these defines tell the Arduino which pins will be used in the program
+#define sensorPin A2  
+#define buzzerPin 13  
+#define keylockPin 11
+int sensorValue = 0; 
+
+int threshold = 0; //make this number higher if the alarm trips too readily
+
+void setup() {
+  //this part declares whgether each pin is an input pin or output pin
+pinMode(keylockPin, INPUT_PULLUP); 
+   pinMode(buzzerPin, OUTPUT); 
+   pinMode(sensorPin, INPUT); 
+   Serial.begin(115200); 
+}
+
+void loop() {  
+  //this loop arms the alarm based on the status of the keylock switch
+  while (digitalRead(keylockPin) == HIGH) { 
+    senseIntruder(); 
+  }
+}
+
+void senseIntruder() {
+  //this function compares the light sensor's value against the threshold
+  //to see if the beam has been interrupted
+  int sensorValue = analogRead(sensorPin);
+  
+  Serial.println(sensorValue); //for debugging purposes
+
+  if (sensorValue > threshold) {
+    digitalWrite(buzzerPin, HIGH);
+      delay(2000); //this sets the duration of the alarm. Higher # = longer buzz
+  } 
+  else {
+    digitalWrite(buzzerPin, LOW); 
+  }
+  delay(20); 
+}
